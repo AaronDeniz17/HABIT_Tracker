@@ -5,7 +5,7 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 export const ThemeContext = createContext(null);
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useLocalStorage("habitflow_theme", "light");
+  const [theme, setTheme] = useLocalStorage("habitflow_theme", "dark");
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));

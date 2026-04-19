@@ -1,5 +1,5 @@
 // /Users/aarondeniz/programming/fsd/habit/src/App.jsx
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Navbar from "./components/Navbar";
@@ -11,27 +11,24 @@ import Settings from "./pages/Settings";
 const App = () => {
   const location = useLocation();
   const habits = useSelector((state) => state.habit.habits);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("habitflow_habits", JSON.stringify(habits));
   }, [habits]);
 
-  useEffect(() => {
-    setSidebarOpen(false);
-  }, [location.pathname]);
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900">
-      <Navbar onMenuClick={() => setSidebarOpen(true)} />
-      <div className="mx-auto flex max-w-7xl gap-6 px-4 pb-8 pt-6 sm:px-6 lg:px-8">
-        <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        <main className="min-w-0 flex-1">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
+    <div className="flex h-screen overflow-hidden bg-surface-950 text-text-primary">
+      <Sidebar />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <Navbar />
+        <main className="flex-1 overflow-y-auto px-4 pb-24 pt-6 md:px-8 md:pb-8">
+          <div key={location.pathname} className="page-entry">
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/settings" element={<Settings />} />
+            </Routes>
+          </div>
         </main>
       </div>
     </div>

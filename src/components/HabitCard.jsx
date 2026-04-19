@@ -1,23 +1,10 @@
 // /Users/aarondeniz/programming/fsd/habit/src/components/HabitCard.jsx
-import { useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
-import { updateHabit } from "../redux/habitSlice";
+import { Check, Trash2 } from "lucide-react";
 
 const todayKey = () => new Date().toISOString().split("T")[0];
 
 const HabitCard = ({ habit, onToggleComplete, onDeleteHabit }) => {
-  const dispatch = useDispatch();
-  const [isEditing, setIsEditing] = useState(false);
-  const [draftTitle, setDraftTitle] = useState(habit.title);
-
   const completedToday = habit.completedDates.includes(todayKey());
-
-  const streakClass = useMemo(() => {
-    if (habit.streak > 5) {
-      return "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300";
-    }
-    return "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300";
-  }, [habit.streak]);
 
   const handleDelete = () => {
     const accepted = window.confirm("Delete this habit?");
@@ -26,78 +13,55 @@ const HabitCard = ({ habit, onToggleComplete, onDeleteHabit }) => {
     }
   };
 
-  const handleSaveTitle = () => {
-    const nextTitle = draftTitle.trim();
-    if (!nextTitle) {
-      setDraftTitle(habit.title);
-      setIsEditing(false);
-      return;
-    }
-    dispatch(updateHabit({ id: habit.id, changes: { title: nextTitle } }));
-    setIsEditing(false);
-  };
-
   return (
-    <article className={`card-surface p-4 hover:-translate-y-1 ${completedToday ? "opacity-80" : "opacity-100"}`}>
+    <article
+      className={`group rounded-card border p-6 transition-all duration-200 ease-out hover:-translate-y-0.5 ${
+        completedToday
+          ? "border-l-4 border-l-accent border-surface-600 bg-accent/15"
+          : "border-surface-600 bg-surface-900 hover:border-surface-700"
+      }`}
+    >
       <div className="flex items-start justify-between gap-3">
-        <div>
-          {isEditing ? (
-            <input
-              value={draftTitle}
-              onChange={(event) => setDraftTitle(event.target.value)}
-              onBlur={handleSaveTitle}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  handleSaveTitle();
-                }
-              }}
-              className="rounded-lg border border-slate-300 px-2 py-1 text-sm dark:border-slate-600 dark:bg-slate-800"
-              autoFocus
-            />
-          ) : (
-            <h3
-              className={`text-lg font-semibold text-slate-900 dark:text-slate-100 ${completedToday ? "line-through" : ""}`}
-              onDoubleClick={() => setIsEditing(true)}
-              title="Double click to edit title"
-            >
-              {habit.title}
-            </h3>
-          )}
-          <p className="mt-1 inline-flex rounded-full bg-violet-100 px-2 py-1 text-xs font-medium text-violet-700 dark:bg-violet-500/20 dark:text-violet-300">
-            {habit.category}
-          </p>
-        </div>
+        <span className="inline-flex rounded-pill bg-surface-700 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.08em] text-text-secondary">
+          {habit.category}
+        </span>
 
-        {completedToday && (
-          <span className="text-xl text-emerald-600 dark:text-emerald-400" aria-label="Completed today">
-            ✓
-          </span>
-        )}
-      </div>
-
-      <div className="mt-4 flex items-center justify-between">
-        <span className={`rounded-full px-3 py-1 text-xs font-semibold ${streakClass}`}>🔥 {habit.streak} day streak</span>
-        <span className="text-xs text-slate-500 dark:text-slate-400">Created {new Date(habit.createdAt).toLocaleDateString()}</span>
-      </div>
-
-      <div className="mt-4 flex gap-2">
-        <button
-          type="button"
-          onClick={() => onToggleComplete(habit.id)}
-          className={`flex-1 rounded-xl px-3 py-2 text-sm font-semibold transition ${
-            completedToday
-              ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:hover:bg-emerald-500/30"
-              : "bg-indigo-600 text-white hover:bg-indigo-700"
-          }`}
-        >
-          {completedToday ? "Completed Today" : "Mark Complete"}
-        </button>
         <button
           type="button"
           onClick={handleDelete}
-          className="rounded-xl bg-rose-100 px-3 py-2 text-sm font-semibold text-rose-700 transition hover:bg-rose-200 dark:bg-rose-500/20 dark:text-rose-300 dark:hover:bg-rose-500/30"
+          className="inline-flex items-center justify-center text-text-muted opacity-0 transition hover:text-red-400 group-hover:opacity-100"
+          aria-label={`Delete ${habit.title}`}
         >
-          Delete
+          <Trash2 size={16} strokeWidth={1.5} />
+        </button>
+      </div>
+
+      <h3 className={`mt-4 font-display text-[17px] font-semibold ${completedToday ? "text-text-secondary" : "text-text-primary"}`}>
+        {habit.title}
+      </h3>
+
+      <div className="mt-3 flex items-end gap-2">
+        <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-muted">streak</span>
+        <span className={`font-mono text-2xl ${habit.streak > 5 ? "animate-streak-pulse text-accent" : "text-text-primary"}`}>
+          {habit.streak}
+        </span>
+        <span className="pb-0.5 text-sm text-text-muted">days</span>
+      </div>
+
+      <div className="my-4 h-px bg-surface-600" />
+
+      <div>
+        <button
+          type="button"
+          onClick={() => onToggleComplete(habit.id)}
+          className={`flex h-10 w-full items-center justify-center gap-2 rounded-input border text-sm font-medium transition-all duration-200 ease-out ${
+            completedToday
+              ? "border-accent/40 bg-accent-dim text-accent"
+              : "border-surface-600 bg-surface-700 text-text-secondary hover:bg-surface-600 hover:text-text-primary"
+          }`}
+        >
+          {completedToday && <Check size={16} strokeWidth={1.5} />}
+          {completedToday ? "Completed today" : "Mark complete"}
         </button>
       </div>
     </article>

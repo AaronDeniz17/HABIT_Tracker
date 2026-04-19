@@ -1,26 +1,43 @@
 // /Users/aarondeniz/programming/fsd/habit/src/components/ThemeToggle.jsx
-import { useContext } from "react";
-import { ThemeContext } from "../context/ThemeContext";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "../context/ThemeContext";
 
-const ThemeToggle = () => {
-  const { theme, toggleTheme } = useContext(ThemeContext);
+const ThemeToggle = ({ variant = "icon" }) => {
+  const { theme, toggleTheme } = useTheme();
+
+  if (variant === "switch") {
+    const isDark = theme === "dark";
+
+    return (
+      <button
+        type="button"
+        onClick={toggleTheme}
+        className={`relative h-7 w-14 rounded-pill border border-surface-600 transition ${
+          isDark ? "bg-accent" : "bg-surface-700"
+        }`}
+        aria-label="Toggle theme"
+        aria-pressed={isDark}
+      >
+        <span
+          className={`absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full bg-surface-950 transition-all duration-200 ease-out ${
+            isDark ? "left-[30px]" : "left-[4px]"
+          }`}
+        />
+      </button>
+    );
+  }
 
   return (
     <button
       type="button"
       onClick={toggleTheme}
-      className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-700 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+      className="inline-flex h-9 w-9 items-center justify-center rounded-input border border-surface-600 bg-surface-800 text-text-secondary hover:bg-surface-700 hover:text-text-primary"
       aria-label="Toggle theme"
-      title="Toggle theme"
     >
-      {theme === "light" ? (
-        <span className="text-lg" aria-hidden="true">
-          🌙
-        </span>
+      {theme === "dark" ? (
+        <Sun size={18} strokeWidth={1.5} aria-hidden="true" />
       ) : (
-        <span className="text-lg" aria-hidden="true">
-          ☀️
-        </span>
+        <Moon size={18} strokeWidth={1.5} aria-hidden="true" />
       )}
     </button>
   );

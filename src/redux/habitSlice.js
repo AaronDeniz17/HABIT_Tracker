@@ -79,10 +79,21 @@ const habitSlice = createSlice({
         habit.completedDates = sortDates(changes.completedDates);
       }
       habit.streak = calculateStreak(habit.completedDates);
+    },
+    resetAllStreaks(state) {
+      state.habits = state.habits.map((habit) => ({
+        ...habit,
+        completedDates: [],
+        streak: 0
+      }));
+    },
+    clearAllHabits(state) {
+      state.habits = [];
     }
   }
 });
 
-export const { addHabit, deleteHabit, toggleComplete, updateHabit } = habitSlice.actions;
+export const { addHabit, deleteHabit, toggleComplete, updateHabit, resetAllStreaks, clearAllHabits } =
+  habitSlice.actions;
 
 export default habitSlice.reducer;
